@@ -189,6 +189,16 @@ public class UserServiceImpl implements UserService {
         return searchRepository.getAllUsersSortByAndSearch(pageNo, pageSize, sortBy, search);
     }
 
+    @Override
+    public PageResponse<?> advanceSearchByCriteria(int pageNo, int pageSize, String sortBy, String... search) {
+        return searchRepository.advanceSearchUser(pageNo, pageSize, sortBy, search);
+    }
+
+    @Override
+    public PageResponse<?> advanceSearchJoinByCriteria(int pageNo, int pageSize, String sortBy, String address, String... search) {
+        return searchRepository.advanceSearchJoinByCriteria(pageNo, pageSize, sortBy, address, search);
+    }
+
 
 //    @Override
 //    public int addUser(UserRequestDTO userRequestDTO) throws ResourceNotFoundException {

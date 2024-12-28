@@ -107,4 +107,21 @@ public class UserController {
                                                            @RequestParam(required = false) String search) {
         return new ResponseData<>(HttpStatus.OK.value(), "list of users", userService.getAllUsersWithSortByAndSearch(pageNo, pageSize, sortBy, search));
     }
+
+    @GetMapping("/advance-search")
+    public ResponseData<Object> advanceSearchByCriteria(@RequestParam(defaultValue = "0", required = false) int pageNo,
+                                                        @Min(10) @RequestParam(defaultValue = "20", required = false) int pageSize,
+                                                        @RequestParam(required = false) String sortBy,
+                                                        @RequestParam(required = false) String... search) {
+        return new ResponseData<>(HttpStatus.OK.value(), "list of users", userService.advanceSearchByCriteria(pageNo, pageSize, sortBy, search));
+    }
+
+    @GetMapping("/advance-search-join")
+    public ResponseData<Object> advanceSearchJoinByCriteria(@RequestParam(defaultValue = "0", required = false) int pageNo,
+                                                            @Min(10) @RequestParam(defaultValue = "20", required = false) int pageSize,
+                                                            @RequestParam(required = false) String sortBy,
+                                                            @RequestParam(required = false) String address,
+                                                            @RequestParam(required = false) String... search) {
+        return new ResponseData<>(HttpStatus.OK.value(), "list of users", userService.advanceSearchJoinByCriteria(pageNo, pageSize, sortBy, address, search));
+    }
 }

@@ -26,4 +26,8 @@ public interface UserService {
     PageResponse<?> getAllUsersWithMultipleSortBy(int pageNo, int pageSize, String... sortBy);
 
     PageResponse<?> getAllUsersWithSortByAndSearch(int pageNo, int pageSize, String sortBy, String search);
+
+    PageResponse<?> advanceSearchByCriteria(int pageNo,int pageSize,String sortBy,String... search);
+
+    PageResponse<?> advanceSearchJoinByCriteria(int pageNo,int pageSize,String sortBy,String address,String... search);
 }
