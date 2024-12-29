@@ -107,4 +107,11 @@ public class UserController {
                                                            @RequestParam(required = false) String search) {
         return new ResponseData<>(HttpStatus.OK.value(), "list of users", userService.getAllUsersWithSortByAndSearch(pageNo, pageSize, sortBy, search));
     }
+
+    @GetMapping("/advance-search-specification")
+    public ResponseData<?> advanceSearch(Pageable pageable,
+                                         @RequestParam(required = false) String[] user,
+                                         @RequestParam(required = false) String[] address) {
+        return new ResponseData<>(HttpStatus.OK.value(), "list of users", userService.advanceSearchSpecification(pageable,user,address));
+    }
 }

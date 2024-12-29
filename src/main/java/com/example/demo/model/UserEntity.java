@@ -3,6 +3,7 @@ package com.example.demo.model;
 import com.example.demo.utils.Gender;
 import com.example.demo.utils.UserStatus;
 import com.example.demo.utils.UserType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcType;
@@ -60,6 +61,7 @@ public class UserEntity extends AbstractEntity{
     @Column(name = "type")
     private UserType type;
 
+    @JsonIgnore
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY,mappedBy = "user")
     private Set<AddressEntity> addresses = new HashSet<>();
 

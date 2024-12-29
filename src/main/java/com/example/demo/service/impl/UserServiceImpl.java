@@ -9,7 +9,10 @@ import com.example.demo.model.AddressEntity;
 import com.example.demo.model.UserEntity;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.repository.custom.SearchRepository;
+import com.example.demo.repository.specification.UserSpec;
+import com.example.demo.repository.specification.UserSpecificationBuilder;
 import com.example.demo.service.UserService;
+import com.example.demo.utils.Gender;
 import com.example.demo.utils.UserStatus;
 import com.example.demo.utils.UserType;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -28,7 +32,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 
 @Service
@@ -110,7 +113,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public PageResponse<?> getAllUsersWithSortBy(int pageNo, int pageSize, String sortBy) {
         int page = 0;
-        if(pageNo > 0){
+        if (pageNo > 0) {
             page = pageNo - 1;
         }
         List<Sort.Order> sorts = new ArrayList<>();
@@ -185,8 +188,43 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public PageResponse<?> getAllUsersWithSortByAndSearch(int pageNo,int pageSize,String sortBy,String search) {
+    public PageResponse<?> getAllUsersWithSortByAndSearch(int pageNo, int pageSize, String sortBy, String search) {
         return searchRepository.getAllUsersSortByAndSearch(pageNo, pageSize, sortBy, search);
+    }
+
+    @Override
+    public PageResponse<?> advanceSearchSpecification(Pageable pageable, String[] user, String[] address) {
+        Page<UserEntity> users = null;
+        if (user != null && address != null) {
+            return searchRepository.getUserJoinedAddress(pageable,user,address);
+        }else if(user != null){
+//            Specification<UserEntity> firstNameSpec = UserSpec.hasFirstName("T");
+//            Specification<UserEntity> genderSpec = UserSpec.notEqualGender(Gender.MALE);
+//            Specification<UserEntity> finalSpec = firstNameSpec.and(genderSpec);
+
+            UserSpecificationBuilder builder = new UserSpecificationBuilder();
+
+            for(String item : user){
+                Pattern pattern = Pattern.compile("(\\w+?)([<:>~!])(.*)(\\p{Punct}?)(.*)(\\p{Punct}?)");
+                Matcher matcher = pattern.matcher(item);
+                if(matcher.find()){
+                    builder.with(matcher.group(1),matcher.group(2),matcher.group(3),matcher.group(4),matcher.group(5));
+                }
+            }
+
+//            users = repository.findAll(finalSpec,pageable);
+                users = repository.findAll(builder.build(),pageable);
+
+        }else{
+            users = repository.findAll(pageable);
+        }
+        return PageResponse.builder()
+                .pageNo(pageable.getPageNumber())
+                .pageSize(pageable.getPageSize())
+                .contents(users.stream().toList())
+                .totalElements(users.getTotalElements())
+                .totalPages(users.getTotalPages())
+                .build();
     }
 
 
